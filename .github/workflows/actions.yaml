@@ -39,7 +39,18 @@ jobs:
     #     cd external-repository
     #     pip install -r path/to/your/requirements.txt
 
+    # - name: Run Python Script
+    #   run: |
+    #     cd external-repository
+    #     python main.py
+
     - name: Run Python Script
       run: |
         cd external-repository
-        python main.py
+        if [ "${{ matrix.repository }}" == "projectwilsen/test1" ]; then
+          python test1.py
+        elif [ "${{ matrix.repository }}" == "projectwilsen/test2" ]; then
+          python initest2.py
+        else
+          echo "No script specified for the repository."
+        fi
