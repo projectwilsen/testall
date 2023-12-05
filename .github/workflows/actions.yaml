@@ -76,7 +76,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repository: ["test1", "test2"]
+        # repository: ["test1", "test2"]
+        repository: ["sectors_wsj_data_updater", "test2"]
     steps:
       - name: Echo Workflow name
         shell: bash
