@@ -66,6 +66,10 @@
 name: 'Workflow of Parent REPO'
 
 on:
+  workflow_run:
+    workflows: ["Run Python Script"]
+    types:
+      - completed
   push:
     branches:
       - main
