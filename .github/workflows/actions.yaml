@@ -66,31 +66,24 @@
 name: 'Workflow of Parent REPO'
 
 on:
-  workflow_run:
-    workflows: ["Run Python Script"]
-    types:
-      - completed
   push:
     branches:
       - main
   workflow_dispatch: {}
 
 jobs: 
-  trigger_workflow:
+  sectors_wsj_data_updater_workflow:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        repository: ["sectors_wsj_data_updater", "test2"]
     steps:
       - name: Echo Workflow name
         shell: bash
         run: |
-          echo "I am Workflow of Parent REPO"
-      - name: Trigger test1 workflow
+          echo "Run sectors_wsj_data_updater workflow"
+      - name: Trigger sectors_wsj_data_updater workflow
         uses: convictional/trigger-workflow-and-wait@v1.6.1
         with:
           owner: projectwilsen
-          repo: ${{ matrix.repository }}
+          repo: sectors_wsj_data_updater
           github_token: ${{ secrets.AUTH_TOKEN }}
           workflow_file_name: actions.yaml
           ref: main
@@ -98,3 +91,30 @@ jobs:
           trigger_workflow: true
           wait_workflow: true
 
+  sectors_yf_data_updater_workflow:
+    needs: sectors_wsj_data_updater_workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Workflow name
+        shell: bash
+        run: |
+          echo "Run sectors_yf_data_updater_workflow"
+      - name: Trigger sectors_yf_data_updater workflow
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: projectwilsen
+          repo: test2
+          github_token: ${{ secrets.AUTH_TOKEN }}
+          workflow_file_name: actions.yaml
+          ref: main
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+
+
+# to run concurrently we can use matrix:
+    # strategy:
+    #   matrix:
+    #     repository: ["sectors_wsj_data_updater", "test2"]
+
+    #     repo: ${{ matrix.repository }}
