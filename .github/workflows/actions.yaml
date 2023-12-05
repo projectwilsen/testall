@@ -1,56 +1,96 @@
-name: Run Python Script in Multiple Repos
+# === FIRST METHOD ===
 
-on:
-  workflow_run:
-    workflows: ["Run Python Script"]
-    types:
-      - completed
+# name: Run Python Script in Multiple Repos
+
+# on:
+#   workflow_run:
+#     workflows: ["Run Python Script"]
+#     types:
+#       - completed
   # schedule:
   #   - cron: '0 0 1 */3 *' 
-  workflow_dispatch: {}
+  # workflow_dispatch: {}
 
-jobs:
-  run_scripts:
-    runs-on: ubuntu-latest
+# jobs:
+#   run_scripts:
+#     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        repository: ["projectwilsen/test1", "projectwilsen/test2"]
+#     strategy:
+#       matrix:
+#         repository: ["projectwilsen/test1", "projectwilsen/test2"]
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ matrix.repository }}
-        path: external-repository
+#     steps:
+#     - name: Checkout Code
+#       uses: actions/checkout@v2
+#       with:
+#         repository: ${{ matrix.repository }}
+#         path: external-repository
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9  # Choose the desired Python version
+#     - name: Set up Python
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: 3.9  
 
-    # - name: Create Virtual Environment
-    #   run: |
-    #     python -m venv venv
-    #     source venv/bin/activate
+    # NOT USE IF THERE'S NO VENV NEEDED
+    # # - name: Create Virtual Environment
+    # #   run: |
+    # #     python -m venv venv
+    # #     source venv/bin/activate
 
-    # - name: Install Dependencies
-    #   run: |
-    #     cd external-repository
-    #     pip install -r path/to/your/requirements.txt
+    # # - name: Install Dependencies
+    # #   run: |
+    # #     cd external-repository
+    # #     pip install -r path/to/your/requirements.txt
 
+
+    # USE IF WANT TO RUN PYTHON FILE NAMED main.py IN A REPO
     # - name: Run Python Script
     #   run: |
     #     cd external-repository
     #     python main.py
 
-    - name: Run Python Script
-      run: |
-        cd external-repository
-        if [ "${{ matrix.repository }}" == "projectwilsen/test1" ]; then
-          python test1.py
-        elif [ "${{ matrix.repository }}" == "projectwilsen/test2" ]; then
-          python initest2.py
-        else
-          echo "No script specified for the repository."
-        fi
+    # USE IF WANT TO RUN SPECIFIC PYTHON FILE IN A REPO
+    # - name: Run Python Script
+    #   run: |
+    #     cd external-repository
+    #     if [ "${{ matrix.repository }}" == "projectwilsen/test1" ]; then
+    #       python test1.py
+    #     elif [ "${{ matrix.repository }}" == "projectwilsen/test2" ]; then
+    #       python initest2.py
+    #     else
+    #       echo "No script specified for the repository."
+    #     fi
+
+
+# ==== SECOND METHOD ==== 
+name: 'Workflow of Parent REPO'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs: 
+  trigger_workflow:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository: ["test1", "test2"]
+    steps:
+      - name: Echo Workflow name
+        shell: bash
+        run: |
+          echo "I am Workflow of Parent REPO"
+      - name: Trigger test1 workflow
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: projectwilsen
+          repo: ${{ matrix.repository }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow_file_name: actions.yaml
+          ref: main
+          wait_interval: 10
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+
