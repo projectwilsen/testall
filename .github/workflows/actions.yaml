@@ -103,7 +103,7 @@ jobs:
         uses: convictional/trigger-workflow-and-wait@v1.6.1
         with:
           owner: projectwilsen
-          repo: test2
+          repo: sectors_yf_data_updater
           github_token: ${{ secrets.AUTH_TOKEN }}
           workflow_file_name: actions.yaml
           ref: main
@@ -111,10 +111,12 @@ jobs:
           trigger_workflow: true
           wait_workflow: true
 
-
+# misal setela ini mau run yang lain dan ga butuh dependecy need bisa tambaiin sectors_wsj_data_updater_workflow, sectors_yf_data_updater_workflow. Trus pakai matrix dibawah
 # to run concurrently we can use matrix:
     # strategy:
     #   matrix:
     #     repository: ["sectors_wsj_data_updater", "test2"]
 
     #     repo: ${{ matrix.repository }}
+
+# kalo ternyata ada yang butuh gabisa concurrent ya tinggal tambain need lagi, misal need proses ke 3
