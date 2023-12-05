@@ -76,7 +76,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # repository: ["test1", "test2"]
         repository: ["sectors_wsj_data_updater", "test2"]
     steps:
       - name: Echo Workflow name
@@ -91,7 +90,6 @@ jobs:
           github_token: ${{ secrets.AUTH_TOKEN }}
           workflow_file_name: actions.yaml
           ref: main
-          wait_interval: 10
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
