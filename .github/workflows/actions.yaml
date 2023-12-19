@@ -105,7 +105,27 @@ jobs:
           owner: projectwilsen
           repo: sectors_yf_data_updater
           github_token: ${{ secrets.AUTH_TOKEN }}
-          workflow_file_name: actions.yaml
+          workflow_file_name: annually.yaml
+          ref: main
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+
+  sectors_yf_data_updater_workflow_q:
+    needs: sectors_wsj_data_updater_workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Workflow name
+        shell: bash
+        run: |
+          echo "Run sectors_yf_data_updater_workflow"
+      - name: Trigger sectors_yf_data_updater workflow
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: projectwilsen
+          repo: sectors_yf_data_updater
+          github_token: ${{ secrets.AUTH_TOKEN }}
+          workflow_file_name: quarterly.yaml
           ref: main
           propagate_failure: true
           trigger_workflow: true
@@ -120,3 +140,6 @@ jobs:
     #     repo: ${{ matrix.repository }}
 
 # kalo ternyata ada yang butuh gabisa concurrent ya tinggal tambain need lagi, misal need proses ke 3
+
+
+# bisa juga bikin 2 workflow kek gini: https://stackoverflow.com/questions/62750603/github-actions-trigger-another-action-after-one-action-is-completed
